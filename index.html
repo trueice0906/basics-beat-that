@@ -51,26 +51,31 @@
   <body>
     <h1 id="header">Basics: Beat That! 🚀</h1>
     <div id="container">
-      <h2 id="player-title">Player 1</h2>
-      <button id="roll-btn">ROLL</button>
-      <div>
-        <p id="dice1"></p>
-        <p id="dice2"></p>
-      </div>
       <p>Input:</p>
       <input id="input-field" />
       <br />
       <button id="submit-button">Submit</button>
+      <p>1. Player 1 starts, press `Submit` button to start dice roll.</p>
       <p>Output:</p>
       <div id="output-div"></div>
-      <button id="restart-btn">RESTART</button>
     </div>
-
     <!-- Import program logic -->
     <script src="script.js"></script>
     <!-- Define button click functionality -->
     <script>
-      main();
+      var button = document.querySelector("#submit-button");
+      button.addEventListener("click", function () {
+        // Set result to input value
+        var input = document.querySelector("#input-field");
+        var result = main(input.value);
+
+        // Display result in output element
+        var output = document.querySelector("#output-div");
+        output.innerHTML = result;
+
+        // Reset input value
+        input.value = "";
+      });
     </script>
   </body>
 </html>
