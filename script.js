@@ -6,49 +6,101 @@
 
 // Dice randomizing helper
 var randomDiceRolls = function () {
-  var randomInterger = Math.floor(Math.random() * 6) + 1;
-  return randomInterger;
+  return Math.floor(Math.random() * 6) + 1;;
 };
 
 // Player Roll Dice
 var playerRollDice = function () {
-  var counter = 0;
-  while (counter < 2) {
+  var rollTimes = 2;
+  playerDiceArray = [];
+  for (let i = 0; i < rollTimes; i++) {
     playerDiceArray.push(randomDiceRolls());
-    counter += 1;
   }
-  return playerDiceArray[0], playerDiceArray[1];
+  return playerDiceArray;
 };
+
+var checkScore = function() {
+  var winning;
+  if (Number(scoreBoard[0]) > Number(scoreBoard[1])) {
+    winning = 'Player 1 won!'
+  } else {
+    winning = 'Player 2 won!'
+  }
+  return `Player 1: ${scoreBoard[0]}, Player 2: ${scoreBoard[1]}, ${winning}`;
+}
+
+var arrangeSequence = function(array, input) { // [1,2]
+  playerScore = `${array[Number(input[0])-1]}${array[Number(input[1])-1]}`
+  scoreBoard[activePlayer] = playerScore;
+}
+
+var switchPlayer = function() {
+  activePlayer = activePlayer === 0? 1 : 0;
+  dice1.innerHTML = '';
+  dice2.innerHTML = '';
+}
+
+var init = function() {
+  activePlayer = 0;
+  scoreBoard = [0,0];
+  playerDiceArray = [];
+  playerScore = 0;
+  diceArray = [];
+  title.innerHTML = `Player ${activePlayer+1}`;
+  dice1.innerHTML = '';
+  dice2.innerHTML = '';
+  output.innerHTML = '';
+}
 
 // Global Variables
-var gameState = "diceRoll";
-var myOutputValue = "";
-var playerDiceArray = [];
+var playerDiceArray;
+var playerScore;
+var activePlayer = 0;
+var scoreBoard = [0,0]
+var diceArray;
+var output = document.querySelector("#output-div");
+var rollBtn = document.querySelector("#roll-btn");
+var dice1 = document.querySelector("#dice1");
+var dice2 = document.querySelector("#dice2");
+var input = document.querySelector("#input-field");
+var button = document.querySelector("#submit-button");
+var title = document.querySelector("#player-title");
+var restart = document.querySelector("#restart-btn");
 
-var main = function (input) {
-  if (gameState == "diceRoll") {
-    playerRollDice();
-    console.log(`game state is ${gameState}`);
-    console.log(playerDiceArray);
-    gameState = "chooseDiceSequence";
-    // GAME STATE CHANGED TO DICE SEQUENCE
-    return (
-      `Player 1 rolled ${playerDiceArray[0]} and ${playerDiceArray[1]}` +
-      `<br><br> Please choose the sequence of your number by inputing 1 or 2`
-    );
-  } else if (gameState === "chooseDiceSequence") {
-    if (input == 1) {
-      var playerScore = Number(
-        String(playerDiceArray[0]) + String(playerDiceArray[1])
-      );
-      console.log(playerScore); // Log playerScore
-      return `Your Score is ${playerScore}`;
-    } else if (input == 2) {
-      var playerScore = Number(
-        String(playerDiceArray[1]) + String(playerDiceArray[0])
-      );
-      console.log(playerScore); // Log playerScore
-      return `Your Score is ${playerScore}`;
+var main = function () {
+
+  rollBtn.addEventListener("click", function() {
+    // get roll dice result , return in array , for eg [4,5];
+    diceArray = playerRollDice();
+    dice1.innerHTML = `Dice 1: ${diceArray[0]}`;
+    dice2.innerHTML = `Dice 2: ${diceArray[1]}`
+  })
+
+  button.addEventListener("click", function () {
+    dice1.innerHTML = '';
+    dice2.innerHTML = '';
+
+    // get user sequence input  
+    // input form = first dice, second dice, for eg,2,1
+    // split the input value to return sequence in array , for eg, ['2','1']
+    // arrange the sequence to get the biggest number
+
+    var sequence = input.value.split(',');
+    var result = arrangeSequence(diceArray, sequence);
+    input.value = ""; // clear input field
+
+
+    if (activePlayer == 1) {
+      result = checkScore();
+      output.innerHTML = result;
+    } else {
+      switchPlayer();
+      title.innerHTML = `Player ${activePlayer + 1}`
     }
-  }
+  });
 };
+
+restart.addEventListener('click', function() {
+  init();
+})
+
